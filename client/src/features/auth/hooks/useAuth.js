@@ -1,73 +1,73 @@
 import { useContext } from "react";
 import AuthContext from "@/features/auth/context/auth.context.jsx";
 import {
-  login,
-  register,
-  logout,
-  getMe,
-} from "@/features/auth/services/auth.api.js"
+  loginApi,
+  registerApi,
+  logoutApi,
+  getMeApi,
+} from "@/features/auth/services/auth.api.js";
 
 const useAuth = () => {
   const context = useContext(AuthContext);
 
   const { user, setUser, loading, setLoading } = context;
 
-  const handleLogin = async (email, password) => {
+  const handleLogin = async ({ email, password }) => {
     try {
       setLoading(true);
-      const res = await login({ email, password });
+      const res = await loginApi({ email, password });
 
-      setUser(res.data);
-      setLoading(false)
+      setUser(res.user);
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      throw error
+      setLoading(false);
+      throw error;
     }
-  }
+  };
 
-  const handleRegister = async ({ username, email, password}) => {
+  const handleRegister = async ({ username, email, password }) => {
     try {
       setLoading(true);
 
-      const res = await register({ username, email, password});
+      const res = await registerApi({ username, email, password });
 
-      setUser(res.data);
-      setLoading(false)
+      setUser(res.user);
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      throw error
+      setLoading(false);
+      throw error;
     }
-  }
+  };
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     try {
       setLoading(true);
 
-      await logout();
+      await logoutApi();
 
       setUser(null);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      throw error
+      setLoading(false);
+      throw error;
     }
-  }
+  };
 
-  const handleGetMe = async() => {
+  const handleGetMe = async () => {
     try {
       setLoading(true);
 
-      const res = await getMe();
+      const res = await getMeApi();
 
-      setUser(res.data);
-      setLoading(false)
+      setUser(res.user);
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      throw error
+      setLoading(false);
+      throw error;
     }
-  }
+  };
 
-  return{
+  return {
     user,
     setUser,
     loading,
@@ -76,7 +76,7 @@ const useAuth = () => {
     handleRegister,
     handleLogout,
     handleGetMe,
-  }
+  };
 };
 
 export default useAuth;

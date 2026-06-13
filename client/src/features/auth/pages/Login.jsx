@@ -1,11 +1,36 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLeftPanel from "@/features/auth/components/AuthLeftPanel";
+import useAuth from "../hooks/useAuth";
+import { useState } from "react";
 
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const { handleLogin, loading } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+
+    if (!email || !password) {
+      setErrorMsg("Email and password are required.");
+      return;
+    }
+
+    try {
+      await handleLogin({ email, password });
+      navigate("/");
+    } catch (err) {
+      setErrorMsg(
+        err.response?.data?.message || err.message || "Login failed. Please check your credentials."
+      );
+    }
   };
+
   return (
     <div className="min-h-screen flex bg-slate-200">
       {/* Left Side */}
@@ -19,9 +44,15 @@ const LoginPage = () => {
               Welcome back
             </h2>
 
-            <p className="mt-2 text-slate-500">
+            <p className="mt-2 text-slate-500 mb-6">
               Sign in to continue to your account
             </p>
+
+            {errorMsg && (
+              <div className="p-3 bg-rose-50 border-l-4 border-rose-500 text-rose-700 text-sm rounded-r-md transition-all duration-300">
+                {errorMsg}
+              </div>
+            )}
           </div>
 
           <form className="space-y-5">
@@ -32,6 +63,8 @@ const LoginPage = () => {
               </label>
 
               <input
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 type="email"
                 placeholder="you@example.com"
                 className="
@@ -56,6 +89,8 @@ const LoginPage = () => {
               </label>
 
               <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
                 type="password"
                 placeholder="Enter your password"
                 className="
@@ -92,10 +127,12 @@ const LoginPage = () => {
 
             <button
               onClick={(e) => handleSubmit(e)}
+              disabled={loading}
               type="submit"
               className="
                 w-full h-12
                 bg-indigo-600
+                disabled:bg-indigo-400
                 text-white
                 rounded-md
                 font-medium
@@ -104,9 +141,11 @@ const LoginPage = () => {
                 hover:scale-[1.01]
                 active:scale-[0.99]
                 transition-all
+                cursor-pointer
+                disabled:cursor-not-allowed
               "
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </button>
           </form>
 

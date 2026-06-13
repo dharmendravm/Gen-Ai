@@ -18,6 +18,7 @@ export const registerApi = async ({ username, email, password }) => {
     return res.data;
   } catch (error) {
     console.log("register api error: ", error);
+    throw error;
   }
 };
 
@@ -31,6 +32,7 @@ export const loginApi = async ({ email, password }) => {
     return res.data;
   } catch (error) {
     console.log("login api error: ", error);
+    throw error;
   }
 };
 
@@ -40,6 +42,7 @@ export const logoutApi = async () => {
     return res.data;
   } catch (error) {
     console.log("logout api error", error);
+    throw error;
   }
 };
 
@@ -47,8 +50,8 @@ export const getMeApi = async () => {
   try {
     const res = await api.get("/auth/get-me");
     return res.data;
-
   } catch (error) {
     console.log("get-me api error", error);
+    throw error;
   }
 };
