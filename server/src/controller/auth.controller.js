@@ -6,17 +6,17 @@ import tokenBlacklistModel from "../models/blacklist.model.js";
 
 export const register = async (req, res) => {
   try {
-    const { userName, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!userName || !email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Username, email, and password are required",
+        message: "username, email, and password are required",
       });
     }
 
     const existingUser = await User.findOne({
-      $or: [{ userName }, { email }],
+      $or: [{ username }, { email }],
     });
 
     if (existingUser) {
@@ -25,7 +25,7 @@ export const register = async (req, res) => {
         message: "User with this username or email already exists",
         user: {
           id: existingUser._id,
-          userName: existingUser.userName,
+          username: existingUser.username,
           email: existingUser.email,
         },
       });
@@ -34,13 +34,13 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      userName,
+      username,
       email,
       password: hashedPassword,
     });
 
     const token = jwt.sign(
-      { id: user._id, userName: user.userName },
+      { id: user._id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -56,7 +56,7 @@ export const register = async (req, res) => {
       message: "User registered successfully",
       user: {
         id: user._id,
-        userName: user.userName,
+        username: user.username,
         email: user.email,
       },
     });
@@ -71,17 +71,17 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { userName, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if ((!userName && !email) || !password) {
+    if ((!username && !email) || !password) {
       return res.status(400).json({
         success: false,
-        message: "Username or email and password are required",
+        message: "username or email and password are required",
       });
     }
 
     const user = await User.findOne({
-      $or: [{ userName }, { email }],
+      $or: [{ username }, { email }],
     }).select("+password");
 
     if (!user) {
@@ -101,7 +101,7 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, userName: user.userName },
+      { id: user._id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -115,10 +115,9 @@ export const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
-      token,
       user: {
         id: user._id,
-        userName: user.userName,
+        username: user.username,
         email: user.email,
       },
     });
@@ -158,9 +157,10 @@ export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     return res.status(200).json({
+      message: "user fetched successfully",
       user: {
         id: user._id,
-        username: user.userName,
+        username: user.username,
         email: user.email,
       },
     });
