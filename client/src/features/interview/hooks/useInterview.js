@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import InterviewContext from "../context/interview.context.jsx";
-import { generateReportApi } from "../services/interview.api.js";
+import { generateReportApi, getReportByIdApi } from "../services/interview.api.js";
 
 const useInterview = () => {
   const context = useContext(InterviewContext);
@@ -24,11 +24,25 @@ const useInterview = () => {
     }
   };
 
+  const getReportById = async (interviewId) => {
+    try {
+      setLoading(true);
+      const data = await getReportByIdApi(interviewId);
+      setReport(data.interviewReport);
+      setLoading(false);
+      return data.interviewReport;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
+  };
+
   return {
     loading,
     report,
     reports,
     generateReport,
+    getReportById,
     setReport,
     setReports,
   };

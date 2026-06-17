@@ -20,3 +20,14 @@ export const generateReportApi = async (formData) => {
     throw error;
   }
 };
+
+export const getReportByIdApi = async (interviewId) => {
+  try {
+    const res = await api.get(`/interview/${interviewId}`);
+    return res.data;
+  } catch (error) {
+    console.log("getReportByIdApi error: ", error);
+    throw error;
+  }
+};
+
